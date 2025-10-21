@@ -22,3 +22,14 @@ SELECT f.*, u.name as user_name
 FROM feeds as f
 LEFT JOIN users as u
   ON (f.user_id = u.id);
+
+-- name: MarkFeedFetched :exec
+UPDATE feeds
+SET last_fetched_at = $1
+WHERE feeds.id = $2;
+
+-- name: GetNextFeedToFetch :one
+SELECT *
+FROM feeds
+ORDER BY feeds.last_fetched_at ASC NULLS FIRST
+LIMIT 1;
